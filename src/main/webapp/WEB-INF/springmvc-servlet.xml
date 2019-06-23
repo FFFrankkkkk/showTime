@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:p="http://www.springframework.org/schema/p"
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:mvc="http://www.springframework.org/schema/mvc"
+xmlns:task="http://www.springframework.org/schema/task"
+xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<!--扫描web层的@Controller-->
+	<context:component-scan base-package="com.showTime"/>
+	<mvc:interceptors>
+	<mvc:interceptor>
+		<!--用于指定拦截的url,可以配置多个-->
+		<mvc:mapping path="/ProductAction/**"/>
+		<!--用于指定排除的url,可以配置多个-->
+		<!--<mvc:exclude-mapping path="/xxx"/>-->
+		<bean id="CheckLoginInterceptor"
+			  class="com.showTime.common.filter.CheckLoginInterceptor"/>
+	</mvc:interceptor>
+	</mvc:interceptors>
+	<!--启用mvc的注解驱动，自动转换bean为json/xml,响应字符编码设置为utf8-->
+	<mvc:annotation-driven enable-matrix-variables="true">
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<constructor-arg value="UTF-8" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 设置主页面 -->
+	<mvc:view-controller path="/" view-name="index"/>
+
+	<!-- springmvc 页面重定向设置： -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+ 	<!-- 静态资源访问 -->
+  	<mvc:default-servlet-handler/>
+
+</beans>
