@@ -12,6 +12,8 @@ import java.util.Date;
 public class User {
   @Id
   private String account;//账号
+  private String phone;//手机号
+  private String mail;//邮箱号
   @Column(nullable = false)
   private String userName;
   @Column(nullable = false)
@@ -26,9 +28,22 @@ public class User {
   @Column(columnDefinition = "timestamp default CURRENT_TIMESTAMP")
   private Timestamp registerTime;
   private int    state;    //状态，默认：0\未实名认证：0\已实名认证成功：1\实名认证未通过：2\被加入黑名单：3\注销：4
-
+  @Column(columnDefinition = "int default 0")
+  private int     amount;//账户余额
     public String getAccount() {
         return account;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public int getAmount() {
+        return amount;
     }
 
     public String getUserName() {
@@ -118,6 +133,18 @@ public class User {
 
     public void setRegisterTime(Timestamp registerTime) {
         this.registerTime = registerTime;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
     public void setState(int state) {

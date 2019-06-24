@@ -49,10 +49,16 @@ public class UserService implements IUserService, ICommonService<User> {
         return userDao.exists(account);
     }
 
-    public int existsIdCard(String IdCard){
-        return userDao.existsIdCard(IdCard);
-    }
     public User findPasswordByAccount(String account){
         return userDao.findPasswordByAccount(account);
+    }
+    public boolean existsByIdCard(String idCard){
+        return userDao.existsByIdCard(idCard);
+    }
+    public boolean existsByPhone(String phone){
+        return userDao.existsByIdCard(phone);
+    }
+    public boolean existsByMail(String mail){
+        return userDao.existsByIdCard(mail);
     }
 }

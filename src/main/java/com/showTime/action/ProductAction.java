@@ -30,6 +30,10 @@ public class ProductAction {
         List<Production> productions=productionService.getHotProduction((String) request.getSession().getAttribute("userType"));
         ReturnJson.returnJsonString(response,productions);
     }
+    @RequestMapping("/addProduction")
+    public @ResponseBody void addProduction(){
+
+    }
 
 }
 

@@ -13,4 +13,6 @@ public interface ProductionDao extends CrudRepository<Production,String> {
     List<Production> getHotProduction(String type);
     @Query(value = "select * from production  where recommend=1 and model=?1",nativeQuery=true)
     List<Production> getRecommendProduction(String type);
+    List<Production> findAllByRecommendAndModel(String recommend,String model);
+    void  deleteAllBySubclass(String subclass);
 }

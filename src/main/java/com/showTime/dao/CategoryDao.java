@@ -11,4 +11,6 @@ import java.util.List;
 public interface CategoryDao extends CrudRepository<Category,String> {
     @Query(value = "select * from Category where model=0 or model=?1",nativeQuery = true)
     List<Category> getCategoryByModel(String model);
+    List<Category> findAllByModelOrModel(String mode11,String model2);
+    public boolean existsByCategoryName(String categoryName);
 }

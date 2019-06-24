@@ -32,6 +32,7 @@ public class Production extends IdEntity {
     @Column(columnDefinition = "int default 0")
     private int    disagree;       //不赞同数，默认为0
     private IsShow isShow;       //是否公开，公开：1，不公开：0
+    @Column(columnDefinition = "int default 0")
     private Recommend recommend;       //是否推荐，推荐：1，不公开：0
     @JoinColumn(name="userAccount",nullable=false)
     @ManyToOne(fetch= FetchType.LAZY,cascade= CascadeType.ALL)
