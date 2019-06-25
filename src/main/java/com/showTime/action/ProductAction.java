@@ -23,12 +23,12 @@ public class ProductAction {
     @RequestMapping("/getRecommendProduction")
     public @ResponseBody void getRecommendProduction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Production> productions=productionService.getRecommendProduction((String) request.getSession().getAttribute("userType"));
-        ReturnJson.returnJsonString(response,productions);
+        ReturnJson.returnJsonString(response,productions,200);
     }
     @RequestMapping("/getHotProduction")
     public @ResponseBody void getHotProduction(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
         List<Production> productions=productionService.getHotProduction((String) request.getSession().getAttribute("userType"));
-        ReturnJson.returnJsonString(response,productions);
+        ReturnJson.returnJsonString(response,productions,200);
     }
     @RequestMapping("/addProduction")
     public @ResponseBody void addProduction(){

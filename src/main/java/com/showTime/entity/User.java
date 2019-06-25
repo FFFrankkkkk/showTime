@@ -6,7 +6,10 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 @Entity
 @Table(name="user")
 public class User {
@@ -30,6 +33,13 @@ public class User {
   private int    state;    //状态，默认：0\未实名认证：0\已实名认证成功：1\实名认证未通过：2\被加入黑名单：3\注销：4
   @Column(columnDefinition = "int default 0")
   private int     amount;//账户余额
+    @OneToMany(mappedBy = "user",cascade= CascadeType.ALL)
+    List<Production> productionList=new ArrayList<Production>();
+
+    public List<Production> getProductionList() {
+        return productionList;
+    }
+
     public String getAccount() {
         return account;
     }
@@ -145,6 +155,10 @@ public class User {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public void setProductionList(List<Production> productionList) {
+        this.productionList = productionList;
     }
 
     public void setState(int state) {

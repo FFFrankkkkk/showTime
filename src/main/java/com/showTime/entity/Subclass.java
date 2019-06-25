@@ -4,17 +4,24 @@ import com.showTime.common.entity.IdEntity;
 import com.showTime.common.tools.Model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "subclass")//音乐分类下的子分类
 public class Subclass extends IdEntity {
-    @ManyToOne(fetch= FetchType.LAZY,cascade= CascadeType.ALL)
+    @ManyToOne(fetch= FetchType.LAZY)
     private Category category;
     private String subclassName;
     private Model model;        //0或1，0为儿童级别，1为成人级别,默认为儿童模式0
-
+    @OneToMany(mappedBy = "subclass",cascade= CascadeType.ALL)
+    List<Production> productionList=new ArrayList<Production>();
     public Category getCategory() {
         return category;
+    }
+
+    public List<Production> getProductionList() {
+        return productionList;
     }
 
     public String getSubclassName() {
@@ -31,6 +38,10 @@ public class Subclass extends IdEntity {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public void setProductionList(List<Production> productionList) {
+        this.productionList = productionList;
     }
 
     public void setModel(Model model) {

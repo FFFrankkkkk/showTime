@@ -14,7 +14,9 @@ public interface UserDao extends CrudRepository<User, String>{
      String getUserIdCardByAccount(String account);
     @Query(value = "select password,salt,face from user where account=?1  ",nativeQuery=true)
     User findPasswordByAccount(String account);
-    public boolean existsByIdCard(String idCard);
-    public boolean existsByPhone(String phone);
-    public boolean existsByMail(String mail);
+    boolean existsByIdCard(String idCard);
+    boolean existsByPhone(String phone);
+    boolean existsByMail(String mail);
+    User findAllByPhone(String phone);
+    User findAllByMail(String mail);
 }

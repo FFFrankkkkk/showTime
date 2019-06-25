@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 import java.io.Serializable;
 import java.util.List;
 
@@ -36,7 +37,9 @@ public class CategoryService  implements IUserService, ICommonService<Category> 
     public void delete(Category category) throws Exception {
 
     }
-
+    public void delete(String categoryName) throws Exception {
+           categoryDao.delete(categoryName);
+    }
     @Override
     public Category findById(Serializable id) throws Exception {
         return null;
@@ -45,5 +48,8 @@ public class CategoryService  implements IUserService, ICommonService<Category> 
     @Override
     public <T> List<T> findByProperty(T c, String property, Object value) throws Exception {
         return null;
+    }
+    public  Category findAllByCategoryName(String categoryName){
+        return categoryDao.findAllByCategoryName(categoryName);
     }
 }

@@ -18,4 +18,8 @@ public class ProductionService {
     public List<Production> getRecommendProduction(String type){
         return productionDao.getRecommendProduction(type);
     }
+
+    public void delete(Production production){
+
+    }
 }

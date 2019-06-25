@@ -24,8 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/UserAction")
@@ -35,40 +34,64 @@ public class UserAction {
    @RequestMapping("/login")
     public @ResponseBody void  Login(HttpServletRequest request, HttpServletResponse response,String name) throws ServletException, IOException, FileUploadException {
        if(request.getSession().getAttribute("account")!=null){
-       ReturnJson.returnJsonString(response,"-1");//账户已经登陆
+       ReturnJson.returnJsonString(response,"账户已经登陆",413);//账户已经登陆
+       }else {
+           String account = (String) request.getParameter("account");
+           String loginType = (String) request.getParameter("loginType");
+           User user;
+           if ("0".equals(loginType)) {
+               user = userService.findAllByPhone(account);
+           } else {
+               user = userService.findAllByMail(account);
+           }
+           if (user != null) {
+               String dataBasePassword = user.getPassword();
+               user.setPassword((String) request.getParameter("password"));
+               if (Encryption.checkPassword(user, dataBasePassword)) {
+                   request.getSession().setAttribute("account", user.getAccount());
+                   //remenberPassword为1时是记住密码，设置cookie
+                   if (request.getParameter("remenberPassword").equals("1")) {
+                       Cookie cookie = new Cookie("account", user.getAccount());
+                       Cookie cookie1 = new Cookie("password", user.getPassword());
+                       response.addCookie(cookie);
+                       response.addCookie(cookie1);
+                   }
+                   user.setPassword("");
+                   user.setSalt("");
+                   Map<String, String> userInfo = new HashMap<String, String>();
+                   userInfo.put("account", user.getAccount());
+                   userInfo.put("userName", user.getUserName());
+                   String year = user.getIdCard().substring(6, 10);
+                   int iAge = 0;
+                   Calendar cal = Calendar.getInstance();
+                   int iCurrYear = cal.get(Calendar.YEAR);
+                   iAge = iCurrYear - Integer.valueOf(year);
+                   userInfo.put("isAdult", iAge < 18 ? "0" : "1");
+
+                   ReturnJson.returnJsonString(response, userInfo, 200);//账户已经登陆
+               } else {
+                   ReturnJson.returnJsonString(response, "密码不正确", 471);
+               }
+           } else {
+               ReturnJson.returnJsonString(response, "用户不存在", 471);//用户不存在
+           }
        }
-       String account= (String) request.getAttribute("account");
-        if(userService.exists(account)){
-             User user=userService.findPasswordByAccount(account);
-             user.setUserName(account);
-             String dataBasePassword=user.getPassword();
-             user.setPassword((String) request.getAttribute("password"));
-             if(Encryption.checkPassword(user,dataBasePassword)){
-                 //remenber为1时是记住密码，设置cookie
-                 if(request.getParameter("remenber").equals("1")){
-                     Cookie cookie=new Cookie("account",user.getAccount());
-                     Cookie cookie1=new Cookie("password",user.getPassword());
-                     response.addCookie(cookie);
-                     response.addCookie(cookie1);
-                 }
-                 user.setPassword("");
-                 user.setSalt("");
-                 ReturnJson.returnJsonString(response,user);//账户已经登陆
-             }
-        }else{
-            ReturnJson.returnJsonString(response,"-2");//用户不存在
-        }
    }
    @RequestMapping("/register")
-    public @ResponseBody int register(HttpServletRequest request, String account, String idCard, String sex, String realName, String userName, String mail, String phone, String password, MultipartFile iconImage, MultipartFile  idcardImg) throws Exception {
+    public @ResponseBody void register(HttpServletRequest request,HttpServletResponse response, String account, String idCard, String sex, String realName, String userName, String mail, String phone, String password, MultipartFile iconImage, MultipartFile  idcardImg) throws Exception {
+      int status=200;
        if(userService.exists(account)){
-           return -1;//已有相同账号
+        //   return -1;//已有相同账号
+           ReturnJson.returnJsonString(response,"已有相同账号",417);
        }else if (userService.existsByIdCard(idCard)){
-           return -2;//已有相同身份证
+          // return -2;//已有相同身份证
+           ReturnJson.returnJsonString(response,"已有相同身份证",417);
        }else if (userService.existsByMail(mail)){
-           return -3;//已有相同邮箱
+          // return -3;//已有相同邮箱
+           ReturnJson.returnJsonString(response,"已有相同邮箱",417);
        }else if(userService.existsByPhone(phone)){
-           return -4;//已有相同手机
+          // return -4;//已有相同手机
+           ReturnJson.returnJsonString(response,"已有相同手机",417);
        }else{
            User user=new User();
            user.setAccount(account);
@@ -99,8 +122,19 @@ public class UserAction {
            idcardImg.transferTo(uploadedidcardImage);
            user.setIdcardImg("http://localhost:8080/showTime/upload/images/idcardImages/" + user.getIdCard()+extendName);
            userService.save(user);
-           return 1;//上传成功
+           Map<String,String> userInfo=new HashMap<String,String>();
+           userInfo.put("account",account);
+           userInfo.put("userName",userName);
+           String year = idCard.substring(6, 10);
+           int iAge = 0;
+           Calendar cal = Calendar.getInstance();
+           int iCurrYear = cal.get(Calendar.YEAR);
+           iAge = iCurrYear - Integer.valueOf(year);
+           userInfo.put("isAdult",iAge<18?"0":"1");
+           ReturnJson.returnJsonString(response,userInfo,200);
+//           return 1;//上传成功
        }
+
 //       User user = new User();
 //       DiskFileItemFactory factory = new DiskFileItemFactory();
 //       String fullPath = request.getServletContext()

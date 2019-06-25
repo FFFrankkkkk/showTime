@@ -1,8 +1,7 @@
 package com.showTime.entity;
 
 import com.showTime.common.tools.Sex;
-import com.showTime.dao.BlackListDao;
-import com.showTime.dao.UserDao;
+import com.showTime.dao.*;
 import com.showTime.service.IBlackListService;
 import com.showTime.service.IUserService;
 import com.showTime.service.UserService;
@@ -15,15 +14,12 @@ import java.util.Optional;
 
 @Transactional
 public class test extends BaseTest{
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private IBlackListService blackListService;
-    @Autowired
-    private BlackListDao blackListDao;
+     @Autowired
+    SubclassDao subclassDao;
     @Test
     @Rollback(value = false)
     public void testUB() throws Exception {
+        subclassDao.delete("12");
 //        User user=new User();
 //        user.setAccount("123456");
 //        user.setUserName("77777");
