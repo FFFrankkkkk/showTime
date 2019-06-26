@@ -17,16 +17,16 @@ public class SubclassAction {
     SubclassService subclassService;
     @RequestMapping("/addSubclass")
     public @ResponseBody int addSubclass(HttpServletRequest request) throws Exception {
-            if(request.getSession().getAttribute("userType").equals("0")){
+            if(request.getSession().getAttribute("type").equals("0")){
                 if(subclassService.existsBySubclassName(request.getParameter("categoryName"))){
                     return -2;//已存在子分类名
                 }else{
                     Subclass subclass=new Subclass();
                     subclass.setSubclassName(request.getParameter("subclassName"));
-                    if(request.getParameter("model").equals("0"))
-                        subclass.setModel(Model.child);
-                    else
-                        subclass.setModel(Model.adult);
+//                    if(request.getParameter("model").equals("0"))
+//                        subclass.setModel(Model.child);
+//                    else
+//                        subclass.setModel(Model.adult);
                     subclassService.save(subclass);
                     return 1;//成功添加
                 }

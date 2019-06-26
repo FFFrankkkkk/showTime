@@ -1,6 +1,7 @@
 package com.showTime.action;
 
 import com.showTime.common.tools.Encryption;
+import com.showTime.common.tools.FileOperation;
 import com.showTime.common.tools.ReturnJson;
 import com.showTime.common.tools.Sex;
 import com.showTime.dao.UserDao;
@@ -23,6 +24,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -106,20 +108,24 @@ public class UserAction {
            if(sex.equals("0"))
            user.setSex(Sex.MALE);
            else user.setSex(Sex.FEMALE);
-           File uploadediconImage;
-           System.out.println(iconImage.getOriginalFilename());
-           int index=iconImage.getOriginalFilename().lastIndexOf(".");
-           String extendName= iconImage.getOriginalFilename().substring(index);
-           String full = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIcon" + "\\" + user.getAccount()+extendName);
-           uploadediconImage = new File(full);
-           iconImage.transferTo(uploadediconImage);
+//           File uploadediconImage;
+//           System.out.println(iconImage.getOriginalFilename());
+//           int index=iconImage.getOriginalFilename().lastIndexOf(".");
+//           String extendName= iconImage.getOriginalFilename().substring(index);
+//           String full = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIcon" + "\\" + user.getAccount()+extendName);
+//           uploadediconImage = new File(full);
+//           iconImage.transferTo(uploadediconImage);
+           String realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIcon" + "\\" + user.getAccount());
+           String extendName=FileOperation.download(realPath,iconImage);
            user.setFace("http://localhost:8080/showTime/upload/images/headIcon/" + user.getAccount()+extendName);
-           File uploadedidcardImage;
-           index=idcardImg.getOriginalFilename().lastIndexOf(".");
-           extendName= idcardImg.getOriginalFilename().substring(index);
-           full = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\idcardImages" + "\\" + user.getIdCard()+extendName);
-           uploadedidcardImage = new File(full);
-           idcardImg.transferTo(uploadedidcardImage);
+//           File uploadedidcardImage;
+//           index=idcardImg.getOriginalFilename().lastIndexOf(".");
+//           extendName= idcardImg.getOriginalFilename().substring(index);
+//           full = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\idcardImages" + "\\" + user.getIdCard()+extendName);
+//           uploadedidcardImage = new File(full);
+//           idcardImg.transferTo(uploadedidcardImage);
+           realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\idcardImages" + "\\" + user.getIdCard());
+           extendName=FileOperation.download(realPath,idcardImg);
            user.setIdcardImg("http://localhost:8080/showTime/upload/images/idcardImages/" + user.getIdCard()+extendName);
            userService.save(user);
            Map<String,String> userInfo=new HashMap<String,String>();

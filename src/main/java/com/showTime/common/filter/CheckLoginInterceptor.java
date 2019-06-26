@@ -2,6 +2,7 @@ package com.showTime.common.filter;
 
 import com.showTime.dao.UserDao;
 import com.showTime.entity.User;
+import com.showTime.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -15,7 +16,7 @@ import java.util.Calendar;
 @Component
 public class CheckLoginInterceptor implements HandlerInterceptor {
     @Autowired
-    UserDao userDao;
+    UserService userService;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String account= (String) request.getSession().getAttribute("account");//session里检查是否登陆
@@ -37,12 +38,13 @@ public class CheckLoginInterceptor implements HandlerInterceptor {
             return true;
         }
         int iAge = 0;
-        String idCard=userDao.getUserIdCardByAccount(account);
+        User user=userService.getUserByAccount(account);
         Calendar cal = Calendar.getInstance();
-        String year = idCard.substring(6, 10);
+        String year = user.getIdCard().substring(6, 10);
         int iCurrYear = cal.get(Calendar.YEAR);
         iAge = iCurrYear - Integer.valueOf(year);
-        request.getSession().setAttribute("userType",iAge<18?"0":"1");
+        request.getSession().setAttribute("type",user.getType());//是否是管理员0是，1不是
+        request.getSession().setAttribute("userType",iAge<18?"0":"1");//是否是成年人
          System.out.println("====================");
         return true;
     }

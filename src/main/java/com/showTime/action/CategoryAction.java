@@ -29,15 +29,15 @@ public class CategoryAction {
     }
     @RequestMapping("/addCategory")
     public @ResponseBody int  addCategory(HttpServletRequest request) throws Exception {
-       if(request.getSession().getAttribute("userType").equals("0")){
+       if(request.getSession().getAttribute("type").equals("0")){
              if(categoryService.existsByCategoryName(request.getParameter("categoryName"))){
                   return -2;//已存在分类名
              }else{
                Category category=new Category();
                category.setCategoryName(request.getParameter("categoryName"));
-               if(request.getParameter("model").equals("0"))
-               category.setModel(Model.child);
-               else category.setModel(Model.adult);
+//               if(request.getParameter("model").equals("0"))
+//               category.setModel(Model.child);
+//               else category.setModel(Model.adult);
                categoryService.save(category);
                return 1;//成功添加
            }

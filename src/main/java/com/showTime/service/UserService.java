@@ -67,4 +67,7 @@ public class UserService implements IUserService, ICommonService<User> {
     public User findAllByMail(String mail){
         return  userDao.findAllByMail(mail);
     }
+    public User getUserByAccount(String account){
+        return userDao.getUserByAccount(account);
+    }
 }

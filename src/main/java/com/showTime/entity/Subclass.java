@@ -10,10 +10,10 @@ import java.util.List;
 @Entity
 @Table(name = "subclass")//音乐分类下的子分类
 public class Subclass extends IdEntity {
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.EAGER)
     private Category category;
     private String subclassName;
-    private Model model;        //0或1，0为儿童级别，1为成人级别,默认为儿童模式0
+//    private Model model;        //0或1，0为儿童级别，1为成人级别,默认为儿童模式0
     @OneToMany(mappedBy = "subclass",cascade= CascadeType.ALL)
     List<Production> productionList=new ArrayList<Production>();
     public Category getCategory() {
@@ -28,9 +28,9 @@ public class Subclass extends IdEntity {
         return subclassName;
     }
 
-    public Model getModel() {
-        return model;
-    }
+//    public Model getModel() {
+//        return model;
+//    }
 
     public void setSubclassName(String subclassName) {
         this.subclassName = subclassName;
@@ -44,7 +44,7 @@ public class Subclass extends IdEntity {
         this.productionList = productionList;
     }
 
-    public void setModel(Model model) {
-        this.model = model;
-    }
+//    public void setModel(Model model) {
+//        this.model = model;
+//    }
 }

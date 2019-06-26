@@ -14,7 +14,7 @@ import java.util.Date;
 @Entity
 @Table(name="production")
 public class Production extends IdEntity {
-    private String address;
+    private String address;//作品的链接
     private String title;
     private Model model;        //0或1，0为儿童级别，1为成人级别
     private String img;         //作品封面链接

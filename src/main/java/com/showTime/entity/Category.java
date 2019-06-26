@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name="category")
 public class Category extends IdEntity {
     private String categoryName;
-    private  Model   model;        //0或1，0为儿童级别，1为成人级别,默认为儿童模式0
+//    private  Model   model;        //0或1，0为儿童级别，1为成人级别,默认为儿童模式0
     @OneToMany(mappedBy = "category",cascade= CascadeType.ALL)
     List<Production> productionList=new ArrayList<Production>();
     @OneToMany(mappedBy = "category",cascade= CascadeType.ALL)
@@ -32,9 +32,9 @@ public class Category extends IdEntity {
         return productionList;
     }
 
-    public Model getModel() {
-        return model;
-    }
+//    public Model getModel() {
+//        return model;
+//    }
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
@@ -48,7 +48,7 @@ public class Category extends IdEntity {
         this.subclasses = subclasses;
     }
 
-    public void setModel(Model model) {
-        this.model = model;
-    }
+//    public void setModel(Model model) {
+//        this.model = model;
+//    }
 }
