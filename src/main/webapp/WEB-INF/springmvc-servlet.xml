@@ -19,6 +19,8 @@ http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 	<mvc:interceptor>
 		<!--用于指定拦截的url,可以配置多个-->
 		<mvc:mapping path="/ProductAction/**"/>
+		<mvc:mapping path="/CategoryAction/**"/>
+		<mvc:mapping path="/SubclassAction/**"/>
 		<!--用于指定排除的url,可以配置多个-->
 		<!--<mvc:exclude-mapping path="/xxx"/>-->
 		<bean id="CheckLoginInterceptor"

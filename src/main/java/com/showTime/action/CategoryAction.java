@@ -24,58 +24,62 @@ public class CategoryAction {
     CategoryService categoryService;
     @RequestMapping("/getCategoryByModel")
     public @ResponseBody void getCategoryByModel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Category> categories=categoryService.getCategoryByModel((String) request.getSession().getAttribute("userType"));
+        List<Category> categories=categoryService.findAll();
         ReturnJson.returnJsonString(response,categories,200);
     }
     @RequestMapping("/addCategory")
-    public @ResponseBody int  addCategory(HttpServletRequest request) throws Exception {
-       if(request.getSession().getAttribute("type").equals("0")){
-             if(categoryService.existsByCategoryName(request.getParameter("categoryName"))){
-                  return -2;//已存在分类名
+    public @ResponseBody void   addCategory(HttpServletRequest request, HttpServletResponse response) throws Exception {
+//        request.setCharacterEncoding("utf-8");
+       if(request.getSession().getAttribute("account")!=null&&((Integer) request.getSession().getAttribute("type"))==0){
+           String categoryName=new String(request.getParameter("categoryName").getBytes("iso-8859-1"), "utf-8");
+             if(categoryService.existsByCategoryName(categoryName)){
+                 ReturnJson.returnJsonString(response,"已存在分类名",471);
              }else{
                Category category=new Category();
-               category.setCategoryName(request.getParameter("categoryName"));
+               category.setCategoryName(categoryName);
 //               if(request.getParameter("model").equals("0"))
 //               category.setModel(Model.child);
 //               else category.setModel(Model.adult);
                categoryService.save(category);
-               return 1;//成功添加
+               ReturnJson.returnJsonString(response,"成功添加",200);
+
            }
        }else{
-           return -1;//非管理员，权限不足
+           ReturnJson.returnJsonString(response,"非管理员，权限不足",471);
        }
     }
 
     @RequestMapping("/deleteCategory")
-    public @ResponseBody int deleteCategory(HttpServletRequest request) throws Exception {
+    public @ResponseBody void deleteCategory(HttpServletRequest request,HttpServletResponse response) throws Exception {
         if (request.getSession().getAttribute("userType").equals("0")) {
             if (categoryService.existsByCategoryName(request.getParameter("categoryName"))) {
                 categoryService.delete(request.getParameter("categoryName"));
-                return 1;//成功删除
+                ReturnJson.returnJsonString(response,"成功删除",200);
+
             } else {
-                return -2;//不存在分类名
+                ReturnJson.returnJsonString(response,"不存在分类名",471);
             }
         } else {
-            return -1;//非管理员，权限不足
+            ReturnJson.returnJsonString(response,"非管理员，权限不足",471);
         }
     }
     @RequestMapping("/updateCategory")
-    public @ResponseBody int updateCategory(HttpServletRequest request) throws Exception {
+    public @ResponseBody void updateCategory(HttpServletRequest request,HttpServletResponse response) throws Exception {
         if(request.getSession().getAttribute("userType").equals("0")){
             if(categoryService.existsByCategoryName(request.getParameter("categoryName"))){
                 if(categoryService.existsByCategoryName(request.getParameter("newCategoryName"))){
-                    return -3;//更改名已存在
+                    ReturnJson.returnJsonString(response,"更改名已存在",471);
                 }else {
                     Category category = categoryService.findAllByCategoryName(request.getParameter("subclassName"));
                     category.setCategoryName(request.getParameter("newCategoryName"));
                     categoryService.save(category);
-                    return 1;//成功更改
+                    ReturnJson.returnJsonString(response,"成功更改",200);
                 }
             }else {
-                return -2;//不存在分类名
+                ReturnJson.returnJsonString(response,"不存在分类名",471);
             }
         }else{
-            return -1;//非管理员，权限不足
+            ReturnJson.returnJsonString(response,"非管理员，权限不足",471);
         }
     }
 }

@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
+import java.util.List;
 
 @Component
 public class CheckLoginInterceptor implements HandlerInterceptor {
@@ -38,14 +39,15 @@ public class CheckLoginInterceptor implements HandlerInterceptor {
             return true;
         }
         int iAge = 0;
-        User user=userService.getUserByAccount(account);
+        Object[][] user=userService.getUserByAccount(account);
         Calendar cal = Calendar.getInstance();
-        String year = user.getIdCard().substring(6, 10);
+        System.out.println();
+        String year = String.valueOf(user[0][1]).substring(6, 10);
         int iCurrYear = cal.get(Calendar.YEAR);
         iAge = iCurrYear - Integer.valueOf(year);
-        request.getSession().setAttribute("type",user.getType());//是否是管理员0是，1不是
+        request.getSession().setAttribute("type",user[0][0]);//是否是管理员0是，1不是
         request.getSession().setAttribute("userType",iAge<18?"0":"1");//是否是成年人
-         System.out.println("====================");
+        System.out.println("====================");
         return true;
     }
 

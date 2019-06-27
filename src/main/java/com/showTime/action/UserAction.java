@@ -47,32 +47,38 @@ public class UserAction {
                user = userService.findAllByMail(account);
            }
            if (user != null) {
-               String dataBasePassword = user.getPassword();
-               user.setPassword((String) request.getParameter("password"));
-               if (Encryption.checkPassword(user, dataBasePassword)) {
-                   request.getSession().setAttribute("account", user.getAccount());
-                   //remenberPassword为1时是记住密码，设置cookie
-                   if (request.getParameter("remenberPassword").equals("1")) {
-                       Cookie cookie = new Cookie("account", user.getAccount());
-                       Cookie cookie1 = new Cookie("password", user.getPassword());
-                       response.addCookie(cookie);
-                       response.addCookie(cookie1);
-                   }
-                   user.setPassword("");
-                   user.setSalt("");
-                   Map<String, String> userInfo = new HashMap<String, String>();
-                   userInfo.put("account", user.getAccount());
-                   userInfo.put("userName", user.getUserName());
-                   String year = user.getIdCard().substring(6, 10);
-                   int iAge = 0;
-                   Calendar cal = Calendar.getInstance();
-                   int iCurrYear = cal.get(Calendar.YEAR);
-                   iAge = iCurrYear - Integer.valueOf(year);
-                   userInfo.put("isAdult", iAge < 18 ? "0" : "1");
+               if(user.getState()==3){
+                   ReturnJson.returnJsonString(response, "被加入黑名单", 471);
+               }else if(user.getState()==4){
+                   ReturnJson.returnJsonString(response, "注销", 471);
+               }else {
+                   String dataBasePassword = user.getPassword();
+                   user.setPassword((String) request.getParameter("password"));
+                   if (Encryption.checkPassword(user, dataBasePassword)) {
+                       request.getSession().setAttribute("account", user.getAccount());
+                       //remenberPassword为1时是记住密码，设置cookie
+                       if (request.getParameter("remenberPassword").equals("1")) {
+                           Cookie cookie = new Cookie("account", user.getAccount());
+                           Cookie cookie1 = new Cookie("password", user.getPassword());
+                           response.addCookie(cookie);
+                           response.addCookie(cookie1);
+                       }
+                       user.setPassword("");
+                       user.setSalt("");
+                       Map<String, String> userInfo = new HashMap<String, String>();
+                       userInfo.put("account", user.getAccount());
+                       userInfo.put("userName", user.getUserName());
+                       String year = user.getIdCard().substring(6, 10);
+                       int iAge = 0;
+                       Calendar cal = Calendar.getInstance();
+                       int iCurrYear = cal.get(Calendar.YEAR);
+                       iAge = iCurrYear - Integer.valueOf(year);
+                       userInfo.put("isAdult", iAge < 18 ? "0" : "1");
 
-                   ReturnJson.returnJsonString(response, userInfo, 200);//账户已经登陆
-               } else {
-                   ReturnJson.returnJsonString(response, "密码不正确", 471);
+                       ReturnJson.returnJsonString(response, userInfo, 200);//账户已经登陆
+                   } else {
+                       ReturnJson.returnJsonString(response, "密码不正确", 471);
+                   }
                }
            } else {
                ReturnJson.returnJsonString(response, "用户不存在", 471);//用户不存在
@@ -115,9 +121,9 @@ public class UserAction {
 //           String full = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIcon" + "\\" + user.getAccount()+extendName);
 //           uploadediconImage = new File(full);
 //           iconImage.transferTo(uploadediconImage);
-           String realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIcon" + "\\" + user.getAccount());
+           String realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIconImgs" + "\\" + user.getAccount());
            String extendName=FileOperation.download(realPath,iconImage);
-           user.setFace("http://localhost:8080/showTime/upload/images/headIcon/" + user.getAccount()+extendName);
+           user.setFace("http://localhost:8080/showTime/upload/images/headIconImgs/" + user.getAccount()+extendName);
 //           File uploadedidcardImage;
 //           index=idcardImg.getOriginalFilename().lastIndexOf(".");
 //           extendName= idcardImg.getOriginalFilename().substring(index);

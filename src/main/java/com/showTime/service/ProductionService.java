@@ -1,6 +1,8 @@
 package com.showTime.service;
 
 import com.showTime.common.service.ICommonService;
+import com.showTime.common.tools.Model;
+import com.showTime.common.tools.Recommend;
 import com.showTime.dao.CategoryDao;
 import com.showTime.dao.SubclassDao;
 import com.showTime.entity.Category;
@@ -32,7 +34,7 @@ public class ProductionService implements  IUserService, ICommonService<Producti
 
     @Override
     public void save(Production production) throws Exception {
-
+             productionDao.save(production);
     }
     public void save(Production production,String categoryId,String subclassId) throws Exception {
         if(subclassId!=null){
@@ -66,4 +68,8 @@ public class ProductionService implements  IUserService, ICommonService<Producti
     public boolean existsByTitle(String title){
         return productionDao.existsByTitle(title);
     }
+   public List<Production> findAllByRecommendAndModel(Recommend recommend, Model model){
+        return productionDao.findAllByRecommendAndModel(recommend,model);
+   }
+
 }

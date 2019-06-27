@@ -16,8 +16,8 @@ import java.util.List;
 public class CategoryService  implements IUserService, ICommonService<Category> {
     @Autowired
     CategoryDao categoryDao;
-    public List<Category> getCategoryByModel(String model){
-        return categoryDao.findAllByModelOrModel("0",model);
+    public List<Category> findAll(){
+        return (List<Category>) categoryDao.findAll();
     }
     public boolean existsByCategoryName(String categoryName){
         return categoryDao.existsByCategoryName(categoryName);

@@ -10,8 +10,8 @@ import java.util.List;
 
 @Repository
 public interface UserDao extends CrudRepository<User, String>{
-    @Query(value = "select type,idCard from user where account=?1  LIMIT 1",nativeQuery=true)
-     User getUserByAccount(String account);
+    @Query(value = "select user.type,user.idCard from User user  where user.account=?1 ")
+     Object[][] getUserByAccount(String account);
     @Query(value = "select password,salt,face from user where account=?1  ",nativeQuery=true)
     User findPasswordByAccount(String account);
     boolean existsByIdCard(String idCard);

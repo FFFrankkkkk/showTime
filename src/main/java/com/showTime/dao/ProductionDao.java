@@ -1,5 +1,7 @@
 package com.showTime.dao;
 
+import com.showTime.common.tools.Model;
+import com.showTime.common.tools.Recommend;
 import com.showTime.entity.Production;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -13,7 +15,7 @@ public interface ProductionDao extends CrudRepository<Production,String> {
     List<Production> getHotProduction(String type);
     @Query(value = "select * from production  where recommend=1 and model=?1",nativeQuery=true)
     List<Production> getRecommendProduction(String type);
-    List<Production> findAllByRecommendAndModel(String recommend,String model);
+    List<Production> findAllByRecommendAndModel(Recommend recommend, Model model);
     void  deleteAllBySubclass(String subclass);
     boolean  existsByTitle(String title);
 }

@@ -20,6 +20,7 @@ public class Production extends IdEntity {
     private String img;         //作品封面链接
     private String context;     //介绍作品内容
     private Date   checkTime;   //审核时间
+    @Column(columnDefinition = "int default 0")
     private State  state;       //审核状态,未审核为0，不通过:0；通过:1
     @ManyToOne(fetch= FetchType.LAZY)
     private Category category;
