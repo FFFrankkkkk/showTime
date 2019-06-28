@@ -72,5 +72,9 @@ public class ProductionService implements  IUserService, ICommonService<Producti
    public List<Production> findAllByRecommendAndModelAndIsShow(Recommend recommend, Model model,IsShow isShow){
         return productionDao.findAllByRecommendAndModelAndIsShow(recommend,model,isShow );
    }
+   public  List<Production> findAllByModelAndIsShowOrderByAccountDesc(Model model, IsShow isShow){
+       return productionDao.findAllByModelAndIsShowOrderByAccountDesc(model,isShow );
+   }
+
 
 }

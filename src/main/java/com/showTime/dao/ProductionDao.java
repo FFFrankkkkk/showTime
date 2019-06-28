@@ -17,6 +17,7 @@ public interface ProductionDao extends CrudRepository<Production,String> {
     @Query(value = "select * from production  where recommend=1 and model=?1",nativeQuery=true)
     List<Production> getRecommendProduction(String type);
     List<Production> findAllByRecommendAndModelAndIsShow(Recommend recommend, Model model, IsShow isShow);
+    List<Production> findAllByModelAndIsShowOrderByAccountDesc(Model model, IsShow isShow);
     void  deleteAllBySubclass(String subclass);
     boolean  existsByTitle(String title);
 }

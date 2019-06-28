@@ -44,8 +44,19 @@ public class ProductAction {
     }
     @RequestMapping("/getHotProduction")
     public @ResponseBody void getHotProduction(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-        List<Production> highPlaybacks=productionService.getHotProduction((String) request.getSession().getAttribute("userType"));
-        ReturnJson.returnJsonString(response,highPlaybacks,200);
+//        List<Production> highPlaybacks=productionService.getHotProduction((String) request.getSession().getAttribute("userType"));
+        List<Production> productions;
+        if(String.valueOf(request.getSession().getAttribute("userType")).equals("1")) {
+            productions = productionService.findAllByModelAndIsShowOrderByAccountDesc(Model.adult,IsShow.PUBLIC);
+        }else{
+            productions = productionService.findAllByModelAndIsShowOrderByAccountDesc(Model.child,IsShow.PUBLIC);
+        }
+        for(int i=0;i<productions.size();i++){
+            productions.get(i).setSubclass(null);
+            productions.get(i).setCategory(null);
+            productions.get(i).setUser(null);
+        }
+        ReturnJson.returnJsonString(response,productions,200);
     }
     @RequestMapping("/addProduction")
     public @ResponseBody void addProduction(HttpServletRequest request, HttpServletResponse response, String title, String model, MultipartFile img,MultipartFile production,String context,String categoryId,String subClassId,String isShow) throws Exception {
