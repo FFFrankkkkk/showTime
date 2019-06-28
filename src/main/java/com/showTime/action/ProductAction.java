@@ -31,10 +31,15 @@ public class ProductAction {
 //        List<Production> productions=productionService.getRecommendProduction((String) request.getSession().getAttribute("userType"));
         List<Production> productions;
         if(String.valueOf(request.getSession().getAttribute("userType")).equals("1")) {
-           productions = productionService.findAllByRecommendAndModel(Recommend.YES,Model.adult);
+           productions = productionService.findAllByRecommendAndModelAndIsShow(Recommend.YES,Model.adult,IsShow.PUBLIC);
         }else{
-            productions = productionService.findAllByRecommendAndModel(Recommend.YES,Model.child);
+            productions = productionService.findAllByRecommendAndModelAndIsShow(Recommend.YES,Model.child,IsShow.PUBLIC);
         }
+       for(int i=0;i<productions.size();i++){
+           productions.get(i).setSubclass(null);
+           productions.get(i).setCategory(null);
+           productions.get(i).setUser(null);
+       }
         ReturnJson.returnJsonString(response,productions,200);
     }
     @RequestMapping("/getHotProduction")

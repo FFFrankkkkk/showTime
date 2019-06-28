@@ -1,6 +1,7 @@
 package com.showTime.service;
 
 import com.showTime.common.service.ICommonService;
+import com.showTime.common.tools.IsShow;
 import com.showTime.common.tools.Model;
 import com.showTime.common.tools.Recommend;
 import com.showTime.dao.CategoryDao;
@@ -68,8 +69,8 @@ public class ProductionService implements  IUserService, ICommonService<Producti
     public boolean existsByTitle(String title){
         return productionDao.existsByTitle(title);
     }
-   public List<Production> findAllByRecommendAndModel(Recommend recommend, Model model){
-        return productionDao.findAllByRecommendAndModel(recommend,model);
+   public List<Production> findAllByRecommendAndModelAndIsShow(Recommend recommend, Model model,IsShow isShow){
+        return productionDao.findAllByRecommendAndModelAndIsShow(recommend,model,isShow );
    }
 
 }
