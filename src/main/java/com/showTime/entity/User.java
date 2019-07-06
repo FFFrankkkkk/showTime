@@ -164,4 +164,16 @@ public class User {
     public void setState(int state) {
         this.state = state;
     }
+    public void setSomeItemNull(){
+         productionList=null;
+         phone=null;
+         mail=null;
+         password=null;
+         salt=null;
+         realName=null;
+         sex=null;
+         idCard=null;
+         idcardImg=null;
+         registerTime=null;
+    }
 }

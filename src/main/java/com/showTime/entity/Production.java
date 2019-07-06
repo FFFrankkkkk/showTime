@@ -36,7 +36,7 @@ public class Production extends IdEntity {
     @Column(columnDefinition = "int default 0")
     private Recommend recommend;       //是否推荐，推荐：1，不公开：0
     @JoinColumn(name="userAccount",nullable=false)
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.EAGER)
     private User    user;       //用户id，外键，关联user表
     @ManyToOne(fetch= FetchType.LAZY,cascade= CascadeType.ALL)
     @JoinTable(name="production_favorite",

@@ -1,9 +1,6 @@
 package com.showTime.action;
 
-import com.showTime.common.tools.Encryption;
-import com.showTime.common.tools.FileOperation;
-import com.showTime.common.tools.ReturnJson;
-import com.showTime.common.tools.Sex;
+import com.showTime.common.tools.*;
 import com.showTime.dao.UserDao;
 import com.showTime.entity.User;
 import com.showTime.service.UserService;
@@ -12,6 +9,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.RandomStringUtils;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,10 +31,26 @@ import java.util.*;
 public class UserAction {
    @Autowired
    UserService userService;
+   @RequestMapping("/sendMailVerificationCode")
+   public @ResponseBody void sendMailVerificationCode(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+      String mail=request.getParameter("mail");
+      if( !userService.existsByMail(mail)) {
+          String mailVerificationCode = RandomStringUtils.randomAlphanumeric(10);
+          try{
+          SendMail.sendMail(mail, mailVerificationCode, "showTime验证码");
+          }catch (Exception e){
+              ReturnJson.returnJsonString(response, "发送失败", 471);
+          }
+          request.getSession().setAttribute(mail, mailVerificationCode);
+          ReturnJson.returnJsonString(response, "发送成功", 200);
+      }else{
+          ReturnJson.returnJsonString(response,"邮箱已注册",471);
+      }
+   }
    @RequestMapping("/login")
     public @ResponseBody void  Login(HttpServletRequest request, HttpServletResponse response,String name) throws ServletException, IOException, FileUploadException {
        if(request.getSession().getAttribute("account")!=null){
-       ReturnJson.returnJsonString(response,"账户已经登陆",413);//账户已经登陆
+       ReturnJson.returnJsonString(response,"账户已经登陆",471);//账户已经登陆
        }else {
            String account = (String) request.getParameter("account");
            String loginType = (String) request.getParameter("loginType");
@@ -86,34 +100,38 @@ public class UserAction {
        }
    }
    @RequestMapping("/register")
-    public @ResponseBody void register(HttpServletRequest request,HttpServletResponse response, String account, String idCard, String sex, String realName, String userName, String mail, String phone, String password, MultipartFile iconImage, MultipartFile  idcardImg) throws Exception {
-      int status=200;
-       if(userService.exists(account)){
-        //   return -1;//已有相同账号
-           ReturnJson.returnJsonString(response,"已有相同账号",417);
-       }else if (userService.existsByIdCard(idCard)){
-          // return -2;//已有相同身份证
-           ReturnJson.returnJsonString(response,"已有相同身份证",417);
-       }else if (userService.existsByMail(mail)){
-          // return -3;//已有相同邮箱
-           ReturnJson.returnJsonString(response,"已有相同邮箱",417);
-       }else if(userService.existsByPhone(phone)){
-          // return -4;//已有相同手机
-           ReturnJson.returnJsonString(response,"已有相同手机",417);
-       }else{
-           User user=new User();
-           user.setAccount(account);
-           user.setUserName(userName);
-           user.setRealName(realName);
-           user.setIdCard(idCard);
-           user.setPassword(password);
-           user.setPhone(phone);
-           user.setMail(mail);
-           Encryption.encryptPassword(user);
-           user.setType(1);
-           if(sex.equals("0"))
-           user.setSex(Sex.MALE);
-           else user.setSex(Sex.FEMALE);
+    public @ResponseBody void register(HttpServletRequest request,HttpServletResponse response, String account, String idCard, String sex, String realName, String userName, String mail, String phone, String password, MultipartFile iconImage, MultipartFile  idcardImg,String mailVerificationCode ) throws Exception {
+       if(mailVerificationCode==null||mailVerificationCode.equals("")){
+           ReturnJson.returnJsonString(response,"请填邮箱验证码",471);
+       }else if(mailVerificationCode.equals(request.getSession().getAttribute(mail))) {
+           if (userService.exists(account)) {
+               //   return -1;//已有相同账号
+               ReturnJson.returnJsonString(response, "已有相同账号", 417);
+           } else if (userService.existsByIdCard(idCard)) {
+               // return -2;//已有相同身份证
+               ReturnJson.returnJsonString(response, "已有相同身份证", 417);
+           }
+//       else if (userService.existsByMail(mail)){
+//          // return -3;//已有相同邮箱
+//           ReturnJson.returnJsonString(response,"已有相同邮箱",417);
+//       }
+           else if (userService.existsByPhone(phone)) {
+               // return -4;//已有相同手机
+               ReturnJson.returnJsonString(response, "已有相同手机", 417);
+           } else {
+               User user = new User();
+               user.setAccount(account);
+               user.setUserName(userName);
+               user.setRealName(realName);
+               user.setIdCard(idCard);
+               user.setPassword(password);
+               user.setPhone(phone);
+               user.setMail(mail);
+               Encryption.encryptPassword(user);
+               user.setType(1);
+               if (sex.equals("0"))
+                   user.setSex(Sex.MALE);
+               else user.setSex(Sex.FEMALE);
 //           File uploadediconImage;
 //           System.out.println(iconImage.getOriginalFilename());
 //           int index=iconImage.getOriginalFilename().lastIndexOf(".");
@@ -121,30 +139,33 @@ public class UserAction {
 //           String full = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIcon" + "\\" + user.getAccount()+extendName);
 //           uploadediconImage = new File(full);
 //           iconImage.transferTo(uploadediconImage);
-           String realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIconImgs" + "\\" + user.getAccount());
-           String extendName=FileOperation.download(realPath,iconImage);
-           user.setFace("http://localhost:8080/showTime/upload/images/headIconImgs/" + user.getAccount()+extendName);
+               String realPath = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIconImgs" + "\\" + user.getAccount());
+               String extendName = FileOperation.download(realPath, iconImage);
+               user.setFace("http://localhost:8080/showTime/upload/images/headIconImgs/" + user.getAccount() + extendName);
 //           File uploadedidcardImage;
 //           index=idcardImg.getOriginalFilename().lastIndexOf(".");
 //           extendName= idcardImg.getOriginalFilename().substring(index);
 //           full = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\idcardImages" + "\\" + user.getIdCard()+extendName);
 //           uploadedidcardImage = new File(full);
 //           idcardImg.transferTo(uploadedidcardImage);
-           realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\idcardImages" + "\\" + user.getIdCard());
-           extendName=FileOperation.download(realPath,idcardImg);
-           user.setIdcardImg("http://localhost:8080/showTime/upload/images/idcardImages/" + user.getIdCard()+extendName);
-           userService.save(user);
-           Map<String,String> userInfo=new HashMap<String,String>();
-           userInfo.put("account",account);
-           userInfo.put("userName",userName);
-           String year = idCard.substring(6, 10);
-           int iAge = 0;
-           Calendar cal = Calendar.getInstance();
-           int iCurrYear = cal.get(Calendar.YEAR);
-           iAge = iCurrYear - Integer.valueOf(year);
-           userInfo.put("isAdult",iAge<18?"0":"1");
-           ReturnJson.returnJsonString(response,userInfo,200);
+               realPath = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\idcardImages" + "\\" + user.getIdCard());
+               extendName = FileOperation.download(realPath, idcardImg);
+               user.setIdcardImg("http://localhost:8080/showTime/upload/images/idcardImages/" + user.getIdCard() + extendName);
+               userService.save(user);
+               Map<String, String> userInfo = new HashMap<String, String>();
+               userInfo.put("account", account);
+               userInfo.put("userName", userName);
+               String year = idCard.substring(6, 10);
+               int iAge = 0;
+               Calendar cal = Calendar.getInstance();
+               int iCurrYear = cal.get(Calendar.YEAR);
+               iAge = iCurrYear - Integer.valueOf(year);
+               userInfo.put("isAdult", iAge < 18 ? "0" : "1");
+               ReturnJson.returnJsonString(response, userInfo, 200);
 //           return 1;//上传成功
+           }
+       }else{
+           ReturnJson.returnJsonString(response, "邮箱验证码不正确", 471);
        }
 
 //       User user = new User();

@@ -15,7 +15,7 @@ public class ReturnJson {
                     response.setStatus(status);
                     PrintWriter out = response.getWriter();
                     Gson gson = new Gson();
-//                    Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).create();
+//                  Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).create();
                     String jsonString = gson.toJson(object);//将对象转换成json格式的字符串
                     out.write(jsonString);
                     out.flush();

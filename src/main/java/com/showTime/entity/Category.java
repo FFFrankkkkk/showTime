@@ -2,11 +2,10 @@ package com.showTime.entity;
 
 import com.showTime.common.entity.IdEntity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import com.showTime.common.tools.Model;
+import org.springframework.data.repository.cdi.Eager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ public class Category extends IdEntity {
 //    private  Model   model;        //0或1，0为儿童级别，1为成人级别,默认为儿童模式0
     @OneToMany(mappedBy = "category",cascade= CascadeType.ALL)
     List<Production> productionList=new ArrayList<Production>();
-    @OneToMany(mappedBy = "category",cascade= CascadeType.ALL)
+    @OneToMany(mappedBy = "category",cascade= CascadeType.ALL,fetch= FetchType.EAGER)
     List<Subclass> subclasses =new ArrayList<Subclass>();
     public String getCategoryName() {
         return categoryName;

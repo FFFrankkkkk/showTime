@@ -59,7 +59,7 @@ public class UserService implements IUserService, ICommonService<User> {
         return userDao.existsByIdCard(phone);
     }
     public boolean existsByMail(String mail){
-        return userDao.existsByIdCard(mail);
+        return userDao.existsByMail(mail);
     }
     public User findAllByPhone(String phone){
         return userDao.findAllByPhone(phone);

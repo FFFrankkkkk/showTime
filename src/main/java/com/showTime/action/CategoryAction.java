@@ -22,9 +22,20 @@ import java.util.List;
 public class CategoryAction {
     @Autowired
     CategoryService categoryService;
-    @RequestMapping("/getCategoryByModel")
-    public @ResponseBody void getCategoryByModel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @RequestMapping("/getCategory")
+    public @ResponseBody void getCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Category> categories=categoryService.findAll();
+        for(int i=0;i<categories.size();i++) {
+            categories.get(i).setProductionList(null);
+            if (categories.get(i).getSubclasses() == null)
+                categories.get(i).setSubclasses(null);
+            else {
+                for (int j = 0; j < categories.get(i).getSubclasses().size(); j++) {
+                    categories.get(i).getSubclasses().get(j).setProductionList(null);
+                    categories.get(i).getSubclasses().get(j).setCategory(null);
+                }
+            }
+        }
         ReturnJson.returnJsonString(response,categories,200);
     }
     @RequestMapping("/addCategory")

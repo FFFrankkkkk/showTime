@@ -38,7 +38,8 @@ public class ProductAction {
        for(int i=0;i<productions.size();i++){
            productions.get(i).setSubclass(null);
            productions.get(i).setCategory(null);
-           productions.get(i).setUser(null);
+//           productions.get(i).setUser(null);
+           productions.get(i).getUser().setSomeItemNull();
        }
         ReturnJson.returnJsonString(response,productions,200);
     }
@@ -51,10 +52,17 @@ public class ProductAction {
         }else{
             productions = productionService.findAllByModelAndIsShowOrderByAccountDesc(Model.child,IsShow.PUBLIC);
         }
+        User user;
         for(int i=0;i<productions.size();i++){
+            user =new User();
             productions.get(i).setSubclass(null);
             productions.get(i).setCategory(null);
-            productions.get(i).setUser(null);
+//            productions.get(i).setUser(null);
+//            user.setAccount(  productions.get(i).getUser().getAccount());
+//            user.setFace(  productions.get(i).getUser().getFace());
+//            user.setUserName(  productions.get(i).getUser().getUserName());
+//            productions.get(i).setUser(user);
+            productions.get(i).getUser().setSomeItemNull();
         }
         ReturnJson.returnJsonString(response,productions,200);
     }
