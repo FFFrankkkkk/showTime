@@ -75,6 +75,14 @@ public class ProductionService implements  IUserService, ICommonService<Producti
    public  List<Production> findAllByModelAndIsShowOrderByAccountDesc(Model model, IsShow isShow){
        return productionDao.findAllByModelAndIsShowOrderByAccountDesc(model,isShow );
    }
-
+    public  List<Production> findAllByCategoryIdAndModelAndIsShow(String categoryId,Model model, IsShow isShow){
+        return productionDao.findAllByCategoryIdAndModelAndIsShow(categoryId,model,isShow);
+    }
+    public  List<Production> findAllBySubclassIdAndModelAndIsShow(String subclassId,Model model, IsShow isShow){
+        return productionDao.findAllBySubclassIdAndModelAndIsShow(subclassId,model,isShow);
+    }
+    public  Production findAllByAddress(String address){
+        return productionDao.findAllByAddress(address);
+    }
 
 }

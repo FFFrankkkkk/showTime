@@ -15,4 +15,8 @@ public class FileOperation {
         file.transferTo(downloadFile);
         return extendName;
     }
+    public static String getRandomFileNameByCurrentTime(){
+        String randomFileName= String.valueOf(System.currentTimeMillis());
+        return randomFileName;
+    }
 }

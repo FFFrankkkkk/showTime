@@ -18,6 +18,9 @@ public interface ProductionDao extends CrudRepository<Production,String> {
     List<Production> getRecommendProduction(String type);
     List<Production> findAllByRecommendAndModelAndIsShow(Recommend recommend, Model model, IsShow isShow);
     List<Production> findAllByModelAndIsShowOrderByAccountDesc(Model model, IsShow isShow);
+    List<Production> findAllByCategoryIdAndModelAndIsShow(String categoryId,Model model, IsShow isShow);
+    List<Production> findAllBySubclassIdAndModelAndIsShow(String subclassId,Model model, IsShow isShow);
+    Production findAllByAddress(String address);
     void  deleteAllBySubclass(String subclass);
     boolean  existsByTitle(String title);
 }

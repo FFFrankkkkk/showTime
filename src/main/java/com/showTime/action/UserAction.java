@@ -31,6 +31,19 @@ import java.util.*;
 public class UserAction {
    @Autowired
    UserService userService;
+   @RequestMapping("/getOtherUserInformation")
+   public @ResponseBody void getOtherUserInformation(HttpServletRequest request, HttpServletResponse response) throws Exception {
+       String account=request.getParameter("account");
+       User user=userService.findById(account);
+       user.setSomeItemNull2();
+       for(int i=0;i<user.getProductionList().size();i++){
+           user.getProductionList().get(i).setSubclass(null);
+           user.getProductionList().get(i).setCategory(null);
+           user.getProductionList().get(i).setRealPath(null);
+           user.getProductionList().get(i).setUser(null);
+       }
+       ReturnJson.returnJsonString(response, user, 200);
+   }
    @RequestMapping("/sendMailVerificationCode")
    public @ResponseBody void sendMailVerificationCode(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       String mail=request.getParameter("mail");
@@ -139,7 +152,8 @@ public class UserAction {
 //           String full = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIcon" + "\\" + user.getAccount()+extendName);
 //           uploadediconImage = new File(full);
 //           iconImage.transferTo(uploadediconImage);
-               String realPath = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIconImgs" + "\\" + user.getAccount());
+//               String realPath = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIconImgs" + "\\" + user.getAccount());
+               String realPath = request.getServletContext().getRealPath("\\\\upload\\\\images\\\\headIconimgs" + "\\" + user.getAccount());
                String extendName = FileOperation.download(realPath, iconImage);
                user.setFace("http://localhost:8080/showTime/upload/images/headIconImgs/" + user.getAccount() + extendName);
 //           File uploadedidcardImage;

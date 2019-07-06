@@ -15,6 +15,7 @@ import java.util.Date;
 @Table(name="production")
 public class Production extends IdEntity {
     private String address;//作品的链接
+    private String realPath;
     private String title;
     private Model model;        //0或1，0为儿童级别，1为成人级别
     private String img;         //作品封面链接
@@ -45,6 +46,10 @@ public class Production extends IdEntity {
     private Favorite  favorite;
     public String getAddress() {
         return address;
+    }
+
+    public String getRealPath() {
+        return realPath;
     }
 
     public String getTitle() {
@@ -149,6 +154,10 @@ public class Production extends IdEntity {
 
     public void setSubclass(Subclass subclass) {
         this.subclass = subclass;
+    }
+
+    public void setRealPath(String realPath) {
+        this.realPath = realPath;
     }
 
     public void setIsShow(IsShow isShow) {

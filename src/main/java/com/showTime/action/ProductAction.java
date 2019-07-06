@@ -8,8 +8,10 @@ import com.showTime.entity.Subclass;
 import com.showTime.entity.User;
 import com.showTime.service.ProductionService;
 import com.sun.org.apache.bcel.internal.generic.RET;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,6 +29,50 @@ import java.util.List;
 public class ProductAction {
     @Autowired
     private ProductionService productionService;
+    public void setSomeItemNull(List<Production> productions){
+        for(int i=0;i<productions.size();i++){
+            productions.get(i).setSubclass(null);
+            productions.get(i).setCategory(null);
+            productions.get(i).setRealPath(null);
+            productions.get(i).getUser().setSomeItemNull();
+        }
+    }
+    @RequestMapping("/getProductionByCategoryId")
+    public @ResponseBody void getProductionByCategoryId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String categoryId=request.getParameter("categoryId");
+        List<Production> productions;
+        if(String.valueOf(request.getSession().getAttribute("userType")).equals("1")) {
+            productions = productionService.findAllByCategoryIdAndModelAndIsShow(categoryId,Model.adult,IsShow.PUBLIC);
+        }else{
+            productions = productionService.findAllByCategoryIdAndModelAndIsShow(categoryId,Model.child,IsShow.PUBLIC);
+        }
+//        for(int i=0;i<productions.size();i++){
+//            productions.get(i).setSubclass(null);
+//            productions.get(i).setCategory(null);
+//            productions.get(i).setRealPath(null);
+//            productions.get(i).getUser().setSomeItemNull();
+//        }
+        setSomeItemNull(productions);
+        ReturnJson.returnJsonString(response,productions,200);
+    }
+    @RequestMapping("/getProductionBySubclassId")
+    public @ResponseBody void getProductionBySubclassId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String subckassId=request.getParameter("subclassId");
+        List<Production> productions;
+        if(String.valueOf(request.getSession().getAttribute("userType")).equals("1")) {
+            productions = productionService.findAllBySubclassIdAndModelAndIsShow(subckassId,Model.adult,IsShow.PUBLIC);
+        }else{
+            productions = productionService.findAllBySubclassIdAndModelAndIsShow(subckassId,Model.child,IsShow.PUBLIC);
+        }
+//        for(int i=0;i<productions.size();i++){
+//            productions.get(i).setSubclass(null);
+//            productions.get(i).setCategory(null);
+//            productions.get(i).setRealPath(null);
+//            productions.get(i).getUser().setSomeItemNull();
+//        }
+        setSomeItemNull(productions);
+        ReturnJson.returnJsonString(response,productions,200);
+    }
     @RequestMapping("/getRecommendProduction")
     public @ResponseBody void getRecommendProduction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //        List<Production> productions=productionService.getRecommendProduction((String) request.getSession().getAttribute("userType"));
@@ -35,12 +82,14 @@ public class ProductAction {
         }else{
             productions = productionService.findAllByRecommendAndModelAndIsShow(Recommend.YES,Model.child,IsShow.PUBLIC);
         }
-       for(int i=0;i<productions.size();i++){
-           productions.get(i).setSubclass(null);
-           productions.get(i).setCategory(null);
-//           productions.get(i).setUser(null);
-           productions.get(i).getUser().setSomeItemNull();
-       }
+//       for(int i=0;i<productions.size();i++){
+//           productions.get(i).setSubclass(null);
+//           productions.get(i).setCategory(null);
+//           productions.get(i).setRealPath(null);
+////           productions.get(i).setUser(null);
+//           productions.get(i).getUser().setSomeItemNull();
+//       }
+        setSomeItemNull(productions);
         ReturnJson.returnJsonString(response,productions,200);
     }
     @RequestMapping("/getHotProduction")
@@ -55,15 +104,17 @@ public class ProductAction {
         User user;
         for(int i=0;i<productions.size();i++){
             user =new User();
-            productions.get(i).setSubclass(null);
-            productions.get(i).setCategory(null);
+//            productions.get(i).setSubclass(null);
+//            productions.get(i).setCategory(null);
 //            productions.get(i).setUser(null);
 //            user.setAccount(  productions.get(i).getUser().getAccount());
 //            user.setFace(  productions.get(i).getUser().getFace());
 //            user.setUserName(  productions.get(i).getUser().getUserName());
 //            productions.get(i).setUser(user);
-            productions.get(i).getUser().setSomeItemNull();
+//            productions.get(i).setRealPath(null);
+//            productions.get(i).getUser().setSomeItemNull();
         }
+        setSomeItemNull(productions);
         ReturnJson.returnJsonString(response,productions,200);
     }
     @RequestMapping("/addProduction")
@@ -84,13 +135,15 @@ public class ProductAction {
                      }else{
                          production1.setIsShow(IsShow.PUBLIC);
                      }
+                     String randomName=FileOperation.getRandomFileNameByCurrentTime();
                      production1.setContext(context);
-                     String realPath=request.getServletContext().getRealPath("\\\\upload\\\\productions" + "\\" + title);
+                     String realPath=request.getServletContext().getRealPath("\\\\upload\\\\productions" + "\\" + randomName);
                      String extendName= FileOperation.download(realPath,production);
-                     production1.setAddress("http://localhost:8080/showTime/upload/productions/"+title+extendName);
-                     realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\productionImgs" + "\\" +title+"Img");
+                     production1.setRealPath(request.getServletContext().getRealPath("\\\\upload\\\\productions" + "\\" + randomName+extendName));
+                     production1.setAddress("http://localhost:8080/showTime/upload/productions/"+randomName+extendName);
+                     realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\productionImgs" + "\\" +randomName+"Img");
                      extendName=FileOperation.download(realPath,img);
-                     production1.setImg("http://localhost:8080/showTime/upload/images/productionImgs/"+title+"Img"+extendName);
+                     production1.setImg("http://localhost:8080/showTime/upload/images/productionImgs/"+randomName+"Img"+extendName);
                      if(subClassId!=null){
                          Subclass subclass=new Subclass();
                          Category category=new Category();
@@ -115,6 +168,13 @@ public class ProductAction {
               ReturnJson.returnJsonString(response,"未登录",471);
           }
     }
-
+    @RequestMapping("/productionPlayer")
+    public @ResponseBody void productionPlayer(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        String address=request.getParameter("address");//作品流地址
+        Production production=productionService.findAllByAddress(address);
+        File productionFile=new File(production.getRealPath());
+//      FileUtils.copyFile(production,response.getOutputStream());
+        FileUtils.copyFile(productionFile,response.getOutputStream());
+     }
 }
 
