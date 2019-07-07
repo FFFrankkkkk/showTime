@@ -84,5 +84,8 @@ public class ProductionService implements  IUserService, ICommonService<Producti
     public  Production findAllByAddress(String address){
         return productionDao.findAllByAddress(address);
     }
+    public   List<Production> findAllByTitleLikeOrContextLikeAndModelAndIsShow(String search,Model model, IsShow isShow){
+        return productionDao.findAllByTitleLikeOrContextLikeAndModelAndIsShow( search,search,model,  isShow);
+    }
 
 }

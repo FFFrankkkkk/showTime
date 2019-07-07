@@ -24,4 +24,7 @@ public class BlackListService implements IBlackListService  {
     public void save(BlackList blackList) {
         blackListDao.save(blackList);
     }
+    public   List<BlackList> findAll(){
+        return (List<BlackList>) blackListDao.findAll();
+    }
 }

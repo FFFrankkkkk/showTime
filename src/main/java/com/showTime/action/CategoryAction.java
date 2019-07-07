@@ -1,5 +1,6 @@
 package com.showTime.action;
 
+import com.showTime.common.tools.FileOperation;
 import com.showTime.common.tools.Model;
 import com.showTime.common.tools.ReturnJson;
 import com.showTime.entity.Category;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,18 +41,19 @@ public class CategoryAction {
         ReturnJson.returnJsonString(response,categories,200);
     }
     @RequestMapping("/addCategory")
-    public @ResponseBody void   addCategory(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public @ResponseBody void   addCategory(HttpServletRequest request, HttpServletResponse response, String categoryName, MultipartFile categoryImg ) throws Exception {
 //        request.setCharacterEncoding("utf-8");
        if(request.getSession().getAttribute("account")!=null&&((Integer) request.getSession().getAttribute("type"))==0){
-           String categoryName=new String(request.getParameter("categoryName").getBytes("iso-8859-1"), "utf-8");
+//           String categoryName=new String(request.getParameter("categoryName").getBytes("iso-8859-1"), "utf-8");
              if(categoryService.existsByCategoryName(categoryName)){
                  ReturnJson.returnJsonString(response,"已存在分类名",471);
              }else{
                Category category=new Category();
                category.setCategoryName(categoryName);
-//               if(request.getParameter("model").equals("0"))
-//               category.setModel(Model.child);
-//               else category.setModel(Model.adult);
+                 String randomName=FileOperation.getRandomFileNameByCurrentTime();
+                 String realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\categoryImages" + "\\" + randomName);
+                 String extendName= FileOperation.download(realPath,categoryImg);
+                 category.setCategoryImg("http://localhost:8080/showTime/upload/images/categoryImages/"+randomName+extendName);
                categoryService.save(category);
                ReturnJson.returnJsonString(response,"成功添加",200);
 

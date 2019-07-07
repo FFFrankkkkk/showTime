@@ -14,6 +14,8 @@ import java.util.List;
 @Table(name="user")
 public class User {
   @Id
+  @GenericGenerator(name="pk",strategy="uuid")
+  @GeneratedValue(generator="pk",strategy= GenerationType.IDENTITY)
   private String account;//账号
   private String phone;//手机号
   private String mail;//邮箱号
@@ -30,11 +32,17 @@ public class User {
   private String idcardImg;//身份证图片存放地址
   @Column(columnDefinition = "timestamp default CURRENT_TIMESTAMP")
   private Timestamp registerTime;
-  private int    state;    //状态，默认：0\未实名认证：0\已实名认证成功：1\实名认证未通过：2\被加入黑名单：3\注销：4
+  private int    state;    //状态，默认：0
   @Column(columnDefinition = "int default 0")
   private int     amount;//账户余额
     @OneToMany(fetch= FetchType.EAGER,mappedBy = "user",cascade= CascadeType.ALL)
     List<Production> productionList=new ArrayList<Production>();
+//    @ManyToOne(fetch= FetchType.LAZY)
+//    private Follow follow;
+
+//    public Follow getFollow() {
+//        return follow;
+//    }
 
     public List<Production> getProductionList() {
         return productionList;
@@ -164,6 +172,11 @@ public class User {
     public void setState(int state) {
         this.state = state;
     }
+
+//    public void setFollow(Follow follow) {
+//        this.follow = follow;
+//    }
+
     public void setSomeItemNull(){
          productionList=null;
          phone=null;

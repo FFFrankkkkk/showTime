@@ -117,9 +117,14 @@ public class UserAction {
        if(mailVerificationCode==null||mailVerificationCode.equals("")){
            ReturnJson.returnJsonString(response,"请填邮箱验证码",471);
        }else if(mailVerificationCode.equals(request.getSession().getAttribute(mail))) {
+           User user = new User();
+           if(account!=null){
            if (userService.exists(account)) {
                //   return -1;//已有相同账号
                ReturnJson.returnJsonString(response, "已有相同账号", 417);
+           }else{
+               user.setAccount(account);
+           }
            } else if (userService.existsByIdCard(idCard)) {
                // return -2;//已有相同身份证
                ReturnJson.returnJsonString(response, "已有相同身份证", 417);
@@ -132,8 +137,7 @@ public class UserAction {
                // return -4;//已有相同手机
                ReturnJson.returnJsonString(response, "已有相同手机", 417);
            } else {
-               User user = new User();
-               user.setAccount(account);
+//               user.setAccount(account);
                user.setUserName(userName);
                user.setRealName(realName);
                user.setIdCard(idCard);

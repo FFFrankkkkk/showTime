@@ -8,6 +8,7 @@ import com.showTime.entity.Subclass;
 import com.showTime.entity.User;
 import com.showTime.service.ProductionService;
 import com.sun.org.apache.bcel.internal.generic.RET;
+import jdk.nashorn.internal.ir.RuntimeNode;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,7 +26,6 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/ProductAction")
-
 public class ProductAction {
     @Autowired
     private ProductionService productionService;
@@ -36,6 +36,18 @@ public class ProductAction {
             productions.get(i).setRealPath(null);
             productions.get(i).getUser().setSomeItemNull();
         }
+    }
+    @RequestMapping("/searchProduction")
+    public @ResponseBody void searchProduction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        String search="%"+new String(request.getParameter("search").getBytes("iso-8859-1"), "utf-8")+"%";
+        List<Production> productions;
+        if(String.valueOf(request.getSession().getAttribute("userType")).equals("1")) {
+            productions = productionService.findAllByTitleLikeOrContextLikeAndModelAndIsShow(search,Model.adult,IsShow.PUBLIC);
+        }else{
+            productions = productionService.findAllByTitleLikeOrContextLikeAndModelAndIsShow(search,Model.child,IsShow.PUBLIC);
+        }
+        setSomeItemNull(productions);
+        ReturnJson.returnJsonString(response,productions,200);
     }
     @RequestMapping("/getProductionByCategoryId")
     public @ResponseBody void getProductionByCategoryId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

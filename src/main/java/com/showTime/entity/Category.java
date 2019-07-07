@@ -19,8 +19,13 @@ public class Category extends IdEntity {
     List<Production> productionList=new ArrayList<Production>();
     @OneToMany(mappedBy = "category",cascade= CascadeType.ALL,fetch= FetchType.EAGER)
     List<Subclass> subclasses =new ArrayList<Subclass>();
+    private String categoryImg;         //分类图标链接
     public String getCategoryName() {
         return categoryName;
+    }
+
+    public String getCategoryImg() {
+        return categoryImg;
     }
 
     public List<Subclass> getSubclasses() {
@@ -47,6 +52,9 @@ public class Category extends IdEntity {
         this.subclasses = subclasses;
     }
 
+    public void setCategoryImg(String categoryImg) {
+        this.categoryImg = categoryImg;
+    }
 //    public void setModel(Model model) {
 //        this.model = model;
 //    }

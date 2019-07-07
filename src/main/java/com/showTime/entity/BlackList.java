@@ -10,10 +10,11 @@ import java.util.Date;
 @Table(name="blacklist")
 public class BlackList extends IdEntity {
     @JoinColumn(name="userAccount",nullable=false)
-    @ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+    @ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
     private User    user;         //用户Id,pk
     @Column(columnDefinition = "timestamp default CURRENT_TIMESTAMP")
     private Timestamp forbiddenTime;  //禁用开始时间
+    private Timestamp endTime;  //解禁时间
     private String reason;         //禁用理由
 
     public User getUser() {
@@ -22,6 +23,10 @@ public class BlackList extends IdEntity {
 
     public Timestamp getForbiddenTime() {
         return forbiddenTime;
+    }
+
+    public Timestamp getEndTime() {
+        return endTime;
     }
 
     public String getReason() {
@@ -34,6 +39,10 @@ public class BlackList extends IdEntity {
 
     public void setForbiddenTime(Timestamp forbiddenTime) {
         this.forbiddenTime = forbiddenTime;
+    }
+
+    public void setEndTime(Timestamp endTime) {
+        this.endTime = endTime;
     }
 
     public void setReason(String reason) {
