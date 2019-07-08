@@ -5,9 +5,11 @@ import com.showTime.common.tools.IsShow;
 import com.showTime.common.tools.Model;
 import com.showTime.common.tools.Recommend;
 import com.showTime.dao.CategoryDao;
+import com.showTime.dao.ReportDao;
 import com.showTime.dao.SubclassDao;
 import com.showTime.entity.Category;
 import com.showTime.entity.Production;
+import com.showTime.entity.Report;
 import com.showTime.entity.Subclass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class ProductionService implements  IUserService, ICommonService<Producti
     private CategoryDao categoryDao;
     @Autowired
     private SubclassDao subclassDao;
+    @Autowired
+    private ReportDao reportDao;
     public List<Production> getHotProduction(String type){
         return productionDao.getHotProduction(type);
     }
@@ -69,14 +73,28 @@ public class ProductionService implements  IUserService, ICommonService<Producti
     public boolean existsByTitle(String title){
         return productionDao.existsByTitle(title);
     }
-   public List<Production> findAllByRecommendAndModelAndIsShow(Recommend recommend, Model model,IsShow isShow){
-        return productionDao.findAllByRecommendAndModelAndIsShow(recommend,model,isShow );
+   public List<Production> findAllByRecommendAndModelAndIsShow(Recommend recommend, Model model,IsShow isShow,String categoryId){
+        if(categoryId==null||"".equals(categoryId)) {
+            return productionDao.findAllByRecommendAndModelAndIsShow(recommend, model, isShow);
+        }else{
+            return productionDao.findAllByRecommendAndModelAndIsShowAndCategoryId(recommend, model, isShow,categoryId);
+        }
+//       return productionDao.findAllByRecommendAndModelAndIsShow(recommend, model, isShow);
+
    }
-   public  List<Production> findAllByModelAndIsShowOrderByAccountDesc(Model model, IsShow isShow){
-       return productionDao.findAllByModelAndIsShowOrderByAccountDesc(model,isShow );
+   public  List<Production> findAllByModelAndIsShowOrderByAccountDesc(Model model, IsShow isShow,String categoryId) {
+       if (categoryId == null || "".equals(categoryId)) {
+           return productionDao.findAllByModelAndIsShowOrderByAccountDesc(model, isShow);
+       }else{
+           return productionDao.findAllByModelAndIsShowAndCategoryIdOrderByAccountDesc(model, isShow,categoryId);
+       }
+//       return productionDao.findAllByModelAndIsShowOrderByAccountDesc(model, isShow);
    }
     public  List<Production> findAllByCategoryIdAndModelAndIsShow(String categoryId,Model model, IsShow isShow){
         return productionDao.findAllByCategoryIdAndModelAndIsShow(categoryId,model,isShow);
+    }
+    public  List<Production> findAllByIdAndModelAndIsShow(String id,Model model, IsShow isShow){
+        return productionDao.findAllByIdAndModelAndIsShow(id,model,isShow);
     }
     public  List<Production> findAllBySubclassIdAndModelAndIsShow(String subclassId,Model model, IsShow isShow){
         return productionDao.findAllBySubclassIdAndModelAndIsShow(subclassId,model,isShow);
@@ -87,5 +105,7 @@ public class ProductionService implements  IUserService, ICommonService<Producti
     public   List<Production> findAllByTitleLikeOrContextLikeAndModelAndIsShow(String search,Model model, IsShow isShow){
         return productionDao.findAllByTitleLikeOrContextLikeAndModelAndIsShow( search,search,model,  isShow);
     }
-
+    public void saveReport(Report report){
+        reportDao.save(report);
+    }
 }

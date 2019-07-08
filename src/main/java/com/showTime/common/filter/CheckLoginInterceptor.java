@@ -38,15 +38,18 @@ public class CheckLoginInterceptor implements HandlerInterceptor {
             request.getSession().setAttribute("userType","0");
             return true;
         }
-        int iAge = 0;
         Object[][] user=userService.getUserByAccount(account);
-        Calendar cal = Calendar.getInstance();
-        System.out.println();
-        String year = String.valueOf(user[0][1]).substring(6, 10);
-        int iCurrYear = cal.get(Calendar.YEAR);
-        iAge = iCurrYear - Integer.valueOf(year);
-        request.getSession().setAttribute("type",user[0][0]);//是否是管理员0是，1不是
-        request.getSession().setAttribute("userType",iAge<18?"0":"1");//是否是成年人
+        if(user[0][2].equals("2")) {
+            Calendar cal = Calendar.getInstance();
+            int iAge = 0;
+            String year = String.valueOf(user[0][1]).substring(6, 10);
+            int iCurrYear = cal.get(Calendar.YEAR);
+            iAge = iCurrYear - Integer.valueOf(year);
+            request.getSession().setAttribute("userType", iAge < 18 ? "0" : "1");//是否是成年人
+        }else {
+            request.getSession().setAttribute("userType", "0" );//是否是成年人
+        }
+        request.getSession().setAttribute("type", user[0][0]);//是否是管理员0是，1不是
         System.out.println("====================");
         return true;
     }

@@ -32,17 +32,33 @@ public class User {
   private String idcardImg;//身份证图片存放地址
   @Column(columnDefinition = "timestamp default CURRENT_TIMESTAMP")
   private Timestamp registerTime;
-  private int    state;    //状态，默认：0
+  private int    state;    //状态，默认：0  ,1审核中，2审核通过，-1审核失败
+  @Column(columnDefinition = "int default 0")
+  private int    authenticationState;    //状态，默认：0 ,-1封号
   @Column(columnDefinition = "int default 0")
   private int     amount;//账户余额
-    @OneToMany(fetch= FetchType.EAGER,mappedBy = "user",cascade= CascadeType.ALL)
+  @OneToMany(fetch= FetchType.EAGER,mappedBy = "user",cascade= CascadeType.ALL)
     List<Production> productionList=new ArrayList<Production>();
+//    @OneToMany(fetch= FetchType.LAZY,mappedBy = "user",cascade= CascadeType.ALL)
+//    List<Follow> follows=new ArrayList<Follow>();
+//    @JoinTable(name="production_favorite",
+//            joinColumns = {@JoinColumn(name = "user_id",referencedColumnName="account")},
+//            inverseJoinColumns = {@JoinColumn(name = "follow_id",referencedColumnName="id")})
+//    private Follow  follow;
 //    @ManyToOne(fetch= FetchType.LAZY)
 //    private Follow follow;
 
 //    public Follow getFollow() {
 //        return follow;
 //    }
+//
+//    public List<Follow> getFollows() {
+//        return follows;
+//    }
+
+    public int getAuthenticationState() {
+        return authenticationState;
+    }
 
     public List<Production> getProductionList() {
         return productionList;
@@ -112,6 +128,9 @@ public class User {
         this.account = account;
     }
 
+//    public void setFollows(List<Follow> follows) {
+//        this.follows = follows;
+//    }
 
     public void setUserName(String userName) {
         this.userName = userName;
@@ -177,6 +196,10 @@ public class User {
 //        this.follow = follow;
 //    }
 
+    public void setAuthenticationState(int authenticationState) {
+        this.authenticationState = authenticationState;
+    }
+
     public void setSomeItemNull(){
          productionList=null;
          phone=null;
@@ -184,7 +207,7 @@ public class User {
          password=null;
          salt=null;
          realName=null;
-         sex=null;
+//         sex=null;
          idCard=null;
          idcardImg=null;
          registerTime=null;
@@ -198,5 +221,13 @@ public class User {
         idCard=null;
         idcardImg=null;
         registerTime=null;
+    }
+    public void setProductionListsomeItemNull(){
+        for(int i=0;i<productionList.size();i++){
+            productionList.get(i).setSubclass(null);
+            productionList.get(i).setCategory(null);
+            productionList.get(i).setRealPath(null);
+            productionList.get(i).setUser(null);
+        }
     }
 }

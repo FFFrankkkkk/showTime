@@ -53,7 +53,8 @@ public class CategoryAction {
                  String randomName=FileOperation.getRandomFileNameByCurrentTime();
                  String realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\categoryImages" + "\\" + randomName);
                  String extendName= FileOperation.download(realPath,categoryImg);
-                 category.setCategoryImg("http://localhost:8080/showTime/upload/images/categoryImages/"+randomName+extendName);
+//                 category.setCategoryImg("http://localhost:8080/showTime/upload/images/categoryImages/"+randomName+extendName);
+                 category.setCategoryImg("upload/images/categoryImages/"+randomName+extendName);
                categoryService.save(category);
                ReturnJson.returnJsonString(response,"成功添加",200);
 

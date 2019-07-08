@@ -2,16 +2,14 @@ package com.showTime.action;
 
 import com.showTime.common.tools.*;
 import com.showTime.dao.ProductionDao;
-import com.showTime.entity.Category;
-import com.showTime.entity.Production;
-import com.showTime.entity.Subclass;
-import com.showTime.entity.User;
+import com.showTime.entity.*;
 import com.showTime.service.ProductionService;
 import com.sun.org.apache.bcel.internal.generic.RET;
 import jdk.nashorn.internal.ir.RuntimeNode;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,6 +33,25 @@ public class ProductAction {
             productions.get(i).setCategory(null);
             productions.get(i).setRealPath(null);
             productions.get(i).getUser().setSomeItemNull();
+        }
+    }
+    @RequestMapping("/report")
+    public @ResponseBody void report(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+//        String account= (String) request.getSession().getAttribute("account");
+        String account=request.getParameter("account");
+        if(account==null||"".equals(account)){
+            ReturnJson.returnJsonString(response,"未登录",471);
+        }else {
+            Production production =new Production();
+            production.setId(request.getParameter("productionId"));
+            User user=new User();
+            user.setAccount(account);
+//            String reason=request.getParameter("reason");
+            Report report=new Report();
+            report.setProduction(production);
+            report.setUser(user);
+            productionService.saveReport(report);
+            ReturnJson.returnJsonString(response, "举报成功，等待审核", 200);
         }
     }
     @RequestMapping("/searchProduction")
@@ -67,6 +84,24 @@ public class ProductAction {
         setSomeItemNull(productions);
         ReturnJson.returnJsonString(response,productions,200);
     }
+    @RequestMapping("/getProductionById")
+    public @ResponseBody void getProductionById(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String id=request.getParameter("Id");
+        List<Production> productions;
+        if(String.valueOf(request.getSession().getAttribute("userType")).equals("1")) {
+            productions = productionService.findAllByIdAndModelAndIsShow(id,Model.adult,IsShow.PUBLIC);
+        }else{
+            productions = productionService.findAllByIdAndModelAndIsShow(id,Model.child,IsShow.PUBLIC);
+        }
+//        for(int i=0;i<productions.size();i++){
+//            productions.get(i).setSubclass(null);
+//            productions.get(i).setCategory(null);
+//            productions.get(i).setRealPath(null);
+//            productions.get(i).getUser().setSomeItemNull();
+//        }
+        setSomeItemNull(productions);
+        ReturnJson.returnJsonString(response,productions,200);
+    }
     @RequestMapping("/getProductionBySubclassId")
     public @ResponseBody void getProductionBySubclassId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String subckassId=request.getParameter("subclassId");
@@ -88,11 +123,12 @@ public class ProductAction {
     @RequestMapping("/getRecommendProduction")
     public @ResponseBody void getRecommendProduction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //        List<Production> productions=productionService.getRecommendProduction((String) request.getSession().getAttribute("userType"));
+        String categoryId=request.getParameter("categoryId");
         List<Production> productions;
         if(String.valueOf(request.getSession().getAttribute("userType")).equals("1")) {
-           productions = productionService.findAllByRecommendAndModelAndIsShow(Recommend.YES,Model.adult,IsShow.PUBLIC);
+           productions = productionService.findAllByRecommendAndModelAndIsShow(Recommend.YES,Model.adult,IsShow.PUBLIC,categoryId);
         }else{
-            productions = productionService.findAllByRecommendAndModelAndIsShow(Recommend.YES,Model.child,IsShow.PUBLIC);
+            productions = productionService.findAllByRecommendAndModelAndIsShow(Recommend.YES,Model.child,IsShow.PUBLIC,categoryId);
         }
 //       for(int i=0;i<productions.size();i++){
 //           productions.get(i).setSubclass(null);
@@ -107,11 +143,12 @@ public class ProductAction {
     @RequestMapping("/getHotProduction")
     public @ResponseBody void getHotProduction(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 //        List<Production> highPlaybacks=productionService.getHotProduction((String) request.getSession().getAttribute("userType"));
+        String categoryId=request.getParameter("categoryId");
         List<Production> productions;
         if(String.valueOf(request.getSession().getAttribute("userType")).equals("1")) {
-            productions = productionService.findAllByModelAndIsShowOrderByAccountDesc(Model.adult,IsShow.PUBLIC);
+            productions = productionService.findAllByModelAndIsShowOrderByAccountDesc(Model.adult,IsShow.PUBLIC,categoryId);
         }else{
-            productions = productionService.findAllByModelAndIsShowOrderByAccountDesc(Model.child,IsShow.PUBLIC);
+            productions = productionService.findAllByModelAndIsShowOrderByAccountDesc(Model.child,IsShow.PUBLIC,categoryId);
         }
         User user;
         for(int i=0;i<productions.size();i++){
@@ -130,8 +167,10 @@ public class ProductAction {
         ReturnJson.returnJsonString(response,productions,200);
     }
     @RequestMapping("/addProduction")
-    public @ResponseBody void addProduction(HttpServletRequest request, HttpServletResponse response, String title, String model, MultipartFile img,MultipartFile production,String context,String categoryId,String subClassId,String isShow) throws Exception {
-          if(request.getSession().getAttribute("account")!=null){
+    public @ResponseBody void addProduction(HttpServletRequest request, HttpServletResponse response, String account,String title, String model, MultipartFile img,MultipartFile production,String context,String categoryId,String subClassId,String isShow) throws Exception {
+        //        String account= (String) request.getSession().getAttribute("account");
+
+            if(account!=null){
                  if(productionService.existsByTitle(title)){
                      ReturnJson.returnJsonString(response,"已存在作品标题",471);
                  }else{
@@ -152,10 +191,12 @@ public class ProductAction {
                      String realPath=request.getServletContext().getRealPath("\\\\upload\\\\productions" + "\\" + randomName);
                      String extendName= FileOperation.download(realPath,production);
                      production1.setRealPath(request.getServletContext().getRealPath("\\\\upload\\\\productions" + "\\" + randomName+extendName));
-                     production1.setAddress("http://localhost:8080/showTime/upload/productions/"+randomName+extendName);
+//                     production1.setAddress("http://localhost:8080/showTime/upload/productions/"+randomName+extendName);
+                     production1.setAddress("upload/productions/"+randomName+extendName);
                      realPath=request.getServletContext().getRealPath("\\\\upload\\\\images\\\\productionImgs" + "\\" +randomName+"Img");
                      extendName=FileOperation.download(realPath,img);
-                     production1.setImg("http://localhost:8080/showTime/upload/images/productionImgs/"+randomName+"Img"+extendName);
+//                     production1.setImg("http://localhost:8080/showTime/upload/images/productionImgs/"+randomName+"Img"+extendName);
+                     production1.setImg("upload/images/productionImgs/"+randomName+"Img"+extendName);
                      if(subClassId!=null){
                          Subclass subclass=new Subclass();
                          Category category=new Category();
@@ -169,11 +210,12 @@ public class ProductAction {
                          production1.setCategory(category);
                      }
                      User user=new User();
-                     user.setAccount((String) request.getSession().getAttribute("account"));
+//                     user.setAccount((String) request.getSession().getAttribute("account"));
+                     user.setAccount(account);
                      production1.setUser(user);
-                     productionService.save(production1);
                      production1.setRecommend(Recommend.NO);
                      production1.setState(State.CHECK);
+                     productionService.save(production1);;
                      ReturnJson.returnJsonString(response,"添加成功",200);
                  }
           }else{
