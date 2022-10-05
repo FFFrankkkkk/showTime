@@ -19,7 +19,7 @@
         <jsp-api.version>2.3.1</jsp-api.version>
         <hibernate-core.version>5.4.2.Final</hibernate-core.version>
         <mysql-connector-java.version>5.1.47</mysql-connector-java.version>
-        <jackson.version>2.9.0</jackson.version>
+        <jackson.version>2.12.6.1</jackson.version>
         <junit.version>4.12</junit.version>
         <spring-data-jpa.version>1.11.7.RELEASE</spring-data-jpa.version>
     </properties>
